@@ -1,20 +1,5 @@
 # Personal Development Coach Telegram Bot
 
-![Project Logo](path/to/logo.png)
-
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Technology Stack](#technology-stack)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 ## Introduction
 
 The **Personal Development Coach Telegram Bot** is an intelligent assistant designed to help users manage their personal development goals seamlessly through Telegram. Integrated with Todoist, it allows users to track tasks, set goals, and receive personalized coaching advice powered by advanced AI models.
