@@ -1,0 +1,22 @@
+# Core dependencies
+fastapi
+uvicorn
+python-dotenv
+websockets
+
+# AI and Language Models
+langgraph
+langchain-core
+langchain-openai
+
+# Telegram Bot
+aiogram
+
+# HTTP Client
+httpx
+
+# Data Validation
+pydantic
+APScheduler
+pytz
+
