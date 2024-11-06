@@ -1,7 +1,7 @@
 # Core dependencies
 fastapi
 uvicorn
-python-dotenv
+python-dotenv>=1.0.0
 websockets
 
 # AI and Language Models
@@ -10,7 +10,7 @@ langchain-core
 langchain-openai
 
 # Telegram Bot
-aiogram
+aiogram>=3.0.0
 
 # HTTP Client
 httpx
@@ -20,5 +20,12 @@ pydantic
 APScheduler
 pytz
 
-celery
+# Database
+supabase
+
+# Redis Queue
+rq>=1.15.1
+redis>=5.0.1
+rq-scheduler>=0.13.1
+
 
