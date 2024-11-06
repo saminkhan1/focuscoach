@@ -1,0 +1,28 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+# Ignore common development directories
+node_modules/
+dist/
+build/
+.git/
+.vscode/
+.idea/
+__pycache__/
+*.py[cod]
+
+# Ignore common file types
+*.log
+*.tmp
+*.temp
+*.swp
+*.bak
+*.cache
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore environment and configuration files
+.env
+.env.*
+*.config.js
+

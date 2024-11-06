@@ -5,9 +5,11 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
 from ..state import State
 from ..utils.prompts import system_prompt
+from ..utils.logging_setup import setup_logging
 
-logger = logging.getLogger(__name__)
-
+# Initialize logging
+setup_logging()
+logger = logging.getLogger(__name__)  # Get module-specific logger
 
 def create_chat_chain():
     """Create the chat chain with LLM and prompt"""

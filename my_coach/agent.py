@@ -6,19 +6,23 @@ from .utils.todoist import TodoistClient
 from .nodes.chat import ChatNode
 from .nodes.get_tasks import GetTasksNode
 from .state import State
+from .utils.logging_setup import setup_logging
 
 # Load environment variables
 load_dotenv()
 
-logger = logging.getLogger(__name__)
+# Initialize logging
+setup_logging()
+logger = logging.getLogger(__name__)  # Get module-specific logger
+
 
 def create_agent():
     """
     Creates and configures the agent graph with Todoist integration.
-    
+
     Returns:
         Compiled StateGraph instance with memory persistence
-        
+
     Raises:
         Exception: If there's an error during agent creation
     """
@@ -46,7 +50,7 @@ def create_agent():
         # Compile graph
         compiled_graph = workflow.compile(checkpointer=MemorySaver())
         logger.info("Agent created successfully")
-        
+
         return compiled_graph
 
     except Exception as e:

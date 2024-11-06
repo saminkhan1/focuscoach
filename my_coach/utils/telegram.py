@@ -14,16 +14,11 @@ from dotenv import load_dotenv
 from aiogram.client.default import DefaultBotProperties
 from .agent_handler import handle_agent_interaction
 from ..agent import create_agent
+from .logging_setup import setup_logging
 
-# Configure root logger
-logging.basicConfig(
-    level=logging.INFO,  # Changed to INFO for production
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s - [%(filename)s:%(lineno)d]",
-    handlers=[logging.StreamHandler()],
-)
-
-# Get module logger
-logger = logging.getLogger(__name__)
+# Initialize root logger at application startup
+logger = setup_logging("my_coach")  # Initialize once here
+logger.info("Starting Telegram bot application")
 
 # Load environment variables
 load_dotenv()

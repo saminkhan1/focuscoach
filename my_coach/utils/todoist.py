@@ -5,11 +5,10 @@ from dotenv import load_dotenv
 import json
 import uuid
 import logging
-# Fix relative imports
 from ..models import Task, Project, SimpleTask
+from .logging_setup import setup_logging
 
-load_dotenv()
-
+# Initialize module logger
 logger = logging.getLogger(__name__)
 
 class TodoistClient:
@@ -18,20 +17,21 @@ class TodoistClient:
     RESOURCE_ALL = "all"
 
     def __init__(self):
-        logger.info("Initializing TodoistClient")
+        self.logger = logger.getChild('TodoistClient')
+        self.logger.info("Initializing TodoistClient")
         self.api_token = os.getenv("TODOIST_API_TOKEN")
         if not self.api_token:
-            logger.critical("TODOIST_API_TOKEN not found in environment variables")
+            self.logger.critical("TODOIST_API_TOKEN not found in environment variables")
             raise ValueError("TODOIST_API_TOKEN must be set in environment variables")
 
         self.base_url = "https://api.todoist.com/sync/v9"
         self.headers = {"Authorization": f"Bearer {self.api_token}"}
         self.sync_token = "*"
-        logger.info("TodoistClient initialized successfully")
+        self.logger.info("TodoistClient initialized successfully")
 
     async def sync(self, resource_types: Optional[List[str]] = None) -> Dict[str, Any]:
         """Perform a sync operation with Todoist"""
-        logger.debug(f"Starting sync operation for resources: {resource_types}")
+        self.logger.debug(f"Starting sync operation for resources: {resource_types}")
         try:
             data = {
                 "sync_token": self.sync_token,
@@ -41,7 +41,7 @@ class TodoistClient:
             }
 
             async with httpx.AsyncClient() as client:
-                logger.debug("Making sync API request")
+                self.logger.debug("Making sync API request")
                 response = await client.post(
                     f"{self.base_url}/sync", headers=self.headers, data=data
                 )
@@ -49,12 +49,12 @@ class TodoistClient:
                 result = response.json()
 
                 self.sync_token = result.get("sync_token", self.sync_token)
-                logger.info("Sync operation completed successfully")
-                logger.debug(f"New sync token: {self.sync_token}")
+                self.logger.info("Sync operation completed successfully")
+                self.logger.debug(f"New sync token: {self.sync_token}")
                 return result
 
         except httpx.HTTPError as e:
-            logger.error(
+            self.logger.error(
                 "HTTP error during sync operation",
                 exc_info=True,
                 extra={
@@ -64,7 +64,7 @@ class TodoistClient:
             )
             raise
         except Exception as e:
-            logger.error(
+            self.logger.error(
                 "Unexpected error during sync operation",
                 exc_info=True,
                 extra={"resource_types": resource_types}
@@ -73,11 +73,11 @@ class TodoistClient:
 
     async def get_tasks(self) -> List[SimpleTask]:
         """Get all active tasks using Todoist Sync API"""
-        logger.info("Fetching all active tasks")
+        self.logger.info("Fetching all active tasks")
         try:
             sync_data = await self.sync([self.RESOURCE_ITEMS])
             items = sync_data.get("items", [])
-            logger.debug(f"Retrieved {len(items)} items from sync")
+            self.logger.debug(f"Retrieved {len(items)} items from sync")
 
             tasks = []
             for item in items:
@@ -95,7 +95,7 @@ class TodoistClient:
                         )
                     )
                 except Exception as e:
-                    logger.error(
+                    self.logger.error(
                         "Error converting item to task",
                         exc_info=True,
                         extra={
@@ -104,11 +104,11 @@ class TodoistClient:
                         }
                     )
 
-            logger.info(f"Successfully processed {len(tasks)} tasks")
+            self.logger.info(f"Successfully processed {len(tasks)} tasks")
             return tasks
 
         except Exception as e:
-            logger.error("Failed to fetch tasks", exc_info=True)
+            self.logger.error("Failed to fetch tasks", exc_info=True)
             raise
 
     async def add_task(
@@ -123,8 +123,8 @@ class TodoistClient:
         description: Optional[str] = None,
     ) -> Task:
         """Add a new task using sync API with extended options"""
-        logger.info("Adding new task")
-        logger.debug(f"Task content: {content[:100]}...")
+        self.logger.info("Adding new task")
+        self.logger.debug(f"Task content: {content[:100]}...")
         
         temp_id = str(uuid.uuid4())
         
@@ -140,7 +140,7 @@ class TodoistClient:
             **({"description": description} if description else {}),
         }
         
-        logger.debug(f"Task arguments: {args}")
+        self.logger.debug(f"Task arguments: {args}")
 
         commands = [
             {
@@ -154,7 +154,7 @@ class TodoistClient:
         try:
             data = {"commands": json.dumps(commands)}
             async with httpx.AsyncClient() as client:
-                logger.debug("Sending task creation request")
+                self.logger.debug("Sending task creation request")
                 response = await client.post(
                     f"{self.base_url}/sync", headers=self.headers, data=data
                 )
@@ -164,20 +164,20 @@ class TodoistClient:
                 if "temp_id_mapping" in result:
                     task_id = result["temp_id_mapping"].get(temp_id)
                     if task_id:
-                        logger.debug(f"Task created with ID: {task_id}")
+                        self.logger.debug(f"Task created with ID: {task_id}")
                         # Get updated task data
                         sync_data = await self.sync(["items"])
                         for item in sync_data.get("items", []):
                             if item["id"] == task_id:
                                 task = await self._convert_item_to_task(item)
-                                logger.info(f"Successfully created task: {task_id}")
+                                self.logger.info(f"Successfully created task: {task_id}")
                                 return task
 
-                logger.error("Failed to create task - no task ID returned")
+                self.logger.error("Failed to create task - no task ID returned")
                 raise Exception("Failed to create task")
                 
         except Exception as e:
-            logger.error(
+            self.logger.error(
                 "Error adding task",
                 exc_info=True,
                 extra={
@@ -189,7 +189,7 @@ class TodoistClient:
 
     async def close_task(self, task_id: str) -> bool:
         """Close a task using sync API"""
-        logger.info(f"Closing task: {task_id}")
+        self.logger.info(f"Closing task: {task_id}")
         
         commands = [
             {"type": "item_close", "uuid": str(uuid.uuid4()), "args": {"id": task_id}}
@@ -199,7 +199,7 @@ class TodoistClient:
             data = {"commands": json.dumps(commands)}
             
             async with httpx.AsyncClient() as client:
-                logger.debug("Sending task close request")
+                self.logger.debug("Sending task close request")
                 response = await client.post(
                     f"{self.base_url}/sync", headers=self.headers, data=data
                 )
@@ -212,14 +212,14 @@ class TodoistClient:
                 )
                 
                 if success:
-                    logger.info(f"Successfully closed task: {task_id}")
+                    self.logger.info(f"Successfully closed task: {task_id}")
                 else:
-                    logger.warning(f"Failed to close task: {task_id}")
+                    self.logger.warning(f"Failed to close task: {task_id}")
                     
                 return success
                 
         except Exception as e:
-            logger.error(
+            self.logger.error(
                 "Error closing task",
                 exc_info=True,
                 extra={"task_id": task_id}
@@ -228,11 +228,11 @@ class TodoistClient:
 
     async def get_projects(self) -> List[Project]:
         """Get all projects"""
-        logger.info("Fetching all projects")
+        self.logger.info("Fetching all projects")
         try:
             sync_data = await self.sync(["projects"])
             projects_data = sync_data.get("projects", [])
-            logger.debug(f"Retrieved {len(projects_data)} projects")
+            self.logger.debug(f"Retrieved {len(projects_data)} projects")
             
             projects = []
             for project in projects_data:
@@ -254,7 +254,7 @@ class TodoistClient:
                     }
                     projects.append(Project(**project_data))
                 except Exception as e:
-                    logger.error(
+                    self.logger.error(
                         "Error processing project data",
                         exc_info=True,
                         extra={
@@ -263,16 +263,16 @@ class TodoistClient:
                         }
                     )
                     
-            logger.info(f"Successfully processed {len(projects)} projects")
+            self.logger.info(f"Successfully processed {len(projects)} projects")
             return projects
             
         except Exception as e:
-            logger.error("Failed to fetch projects", exc_info=True)
+            self.logger.error("Failed to fetch projects", exc_info=True)
             raise
 
     async def _convert_item_to_task(self, item: Dict[str, Any]) -> Task:
         """Helper method to convert an item dict to a Task object"""
-        logger.debug(f"Converting item to task: {item.get('id')}")
+        self.logger.debug(f"Converting item to task: {item.get('id')}")
         try:
             task_data = {
                 "id": item["id"],
@@ -296,11 +296,11 @@ class TodoistClient:
                 "due": item.get("due"),
             }
             task = Task(**task_data)
-            logger.debug(f"Successfully converted item {item['id']} to task")
+            self.logger.debug(f"Successfully converted item {item['id']} to task")
             return task
             
         except Exception as e:
-            logger.error(
+            self.logger.error(
                 "Error converting item to task",
                 exc_info=True,
                 extra={

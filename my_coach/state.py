@@ -2,6 +2,7 @@ from typing import Annotated, TypedDict, List
 from langgraph.graph.message import add_messages
 from .models import SimpleTask
 
+
 def add_tasks(left: List[SimpleTask], right: List[SimpleTask]) -> List[SimpleTask]:
     """Custom reducer for tasks that handles merging by ID"""
     if not left:
@@ -16,6 +17,7 @@ def add_tasks(left: List[SimpleTask], right: List[SimpleTask]) -> List[SimpleTas
 
     return list(tasks_by_id.values())
 
+
 class State(TypedDict):
     msgs: Annotated[list, add_messages]
-    tasks: Annotated[List[SimpleTask], add_tasks] 
+    tasks: Annotated[List[SimpleTask], add_tasks]

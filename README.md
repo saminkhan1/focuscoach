@@ -14,26 +14,37 @@ The **Personal Development Coach Telegram Bot** is an intelligent assistant desi
 
 ## Architecture
 
-The bot leverages a modular architecture to ensure scalability and maintainability:
+The bot uses a modular architecture with clear separation of concerns:
 
-- **Telegram Bot:** Built using Aiogram, handles user interactions and commands.
-- **Todoist Client:** Interfaces with the Todoist API to manage tasks and projects.
-- **AI Engine:** Powered by LangGraph and LangChain, utilizes OpenAI's GPT models for generating human-like responses.
-- **State Management:** Maintains user-specific states and task information for personalized experiences.
-- **Logging:** Comprehensive logging for monitoring and debugging purposes.
+- **Core Components:**
+  - `agent.py`: Orchestrates the LangGraph workflow and state management
+  - `state.py`: Defines the state management types and merge functions
+  - `models.py`: Pydantic models for data validation and type safety
+
+- **Nodes:**
+  - `nodes/chat.py`: Handles AI conversation using LangChain and GPT models
+  - `nodes/get_tasks.py`: Manages Todoist task synchronization
+
+- **Utils:**
+  - `utils/todoist.py`: Todoist API client implementation
+  - `utils/telegram.py`: Telegram bot setup and message handling
+  - `utils/agent_handler.py`: Agent interaction management
+  - `utils/prompts.py`: System prompts and message templates
 
 ## Technology Stack
 
-- **Programming Language:** Python
-- **Frameworks & Libraries:**
-  - [FastAPI](https://fastapi.tiangolo.com/) for asynchronous operations
-  - [Aiogram](https://docs.aiogram.dev/en/latest/) for Telegram bot development
-  - [LangGraph](https://langgraph.org/) and [LangChain](https://langchain.readthedocs.io/) for AI integrations
-  - [Todoist API](https://developer.todoist.com/) for task management
-- **Others:**
-  - [HTTPX](https://www.python-httpx.org/) for asynchronous HTTP requests
-  - [Pydantic](https://pydantic-docs.helpmanual.io/) for data validation
-  - [APScheduler](https://apscheduler.readthedocs.io/) for scheduling tasks
+- **Programming Language:** Python 3.8+
+- **Core Frameworks:**
+  - [Aiogram](https://docs.aiogram.dev/): Telegram bot framework
+  - [LangGraph](https://langgraph.org/): Workflow orchestration
+  - [LangChain](https://langchain.readthedocs.io/): LLM integration
+  - [OpenAI GPT](https://openai.com/): Language model
+  - [Todoist API](https://developer.todoist.com/): Task management
+
+- **Supporting Libraries:**
+  - [Pydantic](https://pydantic-docs.helpmanual.io/): Data validation
+  - [HTTPX](https://www.python-httpx.org/): Async HTTP client
+  - [python-dotenv](https://pypi.org/project/python-dotenv/): Environment management
 
 ## Installation
 
@@ -124,3 +135,24 @@ Contributions are welcome! Please follow these steps to contribute:
 5. **Open a Pull Request**
 
    Submit a pull request detailing your changes for review.
+
+## Project Structure
+
+```text
+my_coach/
+├── my_coach/
+│ ├── init.py
+│ ├── agent.py # LangGraph workflow definition
+│ ├── models.py # Pydantic data models
+│ ├── state.py # State management
+│ ├── nodes/
+│ │ ├── init.py
+│ │ ├── chat.py # Chat processing node
+│ │ └── get_tasks.py # Task synchronization node
+│ └── utils/
+│ ├── init.py
+│ ├── agent_handler.py # Agent interaction logic
+│ ├── prompts.py # System prompts
+│ ├── telegram.py # Telegram bot setup
+│ └── todoist.py # Todoist API client
+```
