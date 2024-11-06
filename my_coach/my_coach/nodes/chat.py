@@ -3,8 +3,8 @@ from typing import List
 from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
-from state import State
-from prompts import system_prompt
+from ..state import State
+from ..utils.prompts import system_prompt
 
 logger = logging.getLogger(__name__)
 

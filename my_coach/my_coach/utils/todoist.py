@@ -1,11 +1,12 @@
 from typing import List, Optional, Dict, Any
-from models import Task, Project, Section, SimpleTask
 import os
 import httpx
 from dotenv import load_dotenv
 import json
 import uuid
 import logging
+# Fix relative imports
+from ..models import Task, Project, SimpleTask
 
 load_dotenv()
 
@@ -57,7 +58,7 @@ class TodoistClient:
                 "HTTP error during sync operation",
                 exc_info=True,
                 extra={
-                    "status_code": getattr(e.response, "status_code", None),
+                    "status_code": getattr(getattr(e, "response", None), "status_code", None),
                     "resource_types": resource_types
                 }
             )
@@ -95,7 +96,7 @@ class TodoistClient:
                     )
                 except Exception as e:
                     logger.error(
-                        f"Error converting item to task",
+                        "Error converting item to task",
                         exc_info=True,
                         extra={
                             "item_id": item.get("id"),

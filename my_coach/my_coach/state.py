@@ -1,6 +1,6 @@
 from typing import Annotated, TypedDict, List
 from langgraph.graph.message import add_messages
-from models import SimpleTask
+from .models import SimpleTask
 
 def add_tasks(left: List[SimpleTask], right: List[SimpleTask]) -> List[SimpleTask]:
     """Custom reducer for tasks that handles merging by ID"""

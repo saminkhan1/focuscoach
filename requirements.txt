@@ -20,3 +20,5 @@ pydantic
 APScheduler
 pytz
 
+celery
+

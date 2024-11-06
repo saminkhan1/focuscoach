@@ -11,18 +11,15 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 import os
 from dotenv import load_dotenv
-from coach_agent import create_agent
 from aiogram.client.default import DefaultBotProperties
-from agent_handler import handle_agent_interaction
-from todoist_client import TodoistClient
+from .agent_handler import handle_agent_interaction
+from ..agent import create_agent
 
 # Configure root logger
 logging.basicConfig(
     level=logging.INFO,  # Changed to INFO for production
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s - [%(filename)s:%(lineno)d]",
-    handlers=[
-        logging.StreamHandler()
-    ],
+    handlers=[logging.StreamHandler()],
 )
 
 # Get module logger
@@ -38,8 +35,10 @@ if not TOKEN:
     logger.critical("TELEGRAM_BOT_TOKEN not found in environment variables")
     raise ValueError("TELEGRAM_BOT_TOKEN must be set in environment variables")
 
+
 class UserStates(StatesGroup):
     chatting = State()
+
 
 # Initialize components
 logger.info("Initializing bot components")
@@ -53,6 +52,7 @@ except Exception as e:
 
 # Store user-specific graphs
 user_graphs: Dict[int, Any] = {}
+
 
 @dp.message(CommandStart())
 async def command_start(message: Message, state: FSMContext) -> None:
@@ -87,14 +87,12 @@ async def command_start(message: Message, state: FSMContext) -> None:
         logger.error(
             f"Failed to initialize session for user {user_id}",
             exc_info=True,
-            extra={
-                "user_id": user_id,
-                "user_name": user_name
-            }
+            extra={"user_id": user_id, "user_name": user_name},
         )
         await message.answer(
             "Sorry, there was an error initializing your session. Please try again later."
         )
+
 
 @dp.message(Command("help"))
 async def command_help(message: Message) -> None:
@@ -105,10 +103,11 @@ async def command_help(message: Message) -> None:
 
     user_id = message.from_user.id
     logger.info(f"Processing /help command for user {user_id}")
-    
+
     help_text = "Just send me a message and I'll be happy to help!"
     await message.answer(help_text)
     logger.debug(f"Sent help message to user {user_id}")
+
 
 @dp.message(UserStates.chatting)
 async def handle_message(message: Message, state: FSMContext) -> None:
@@ -149,14 +148,12 @@ async def handle_message(message: Message, state: FSMContext) -> None:
         logger.error(
             f"Failed to process message from user {user_id}",
             exc_info=True,
-            extra={
-                "user_id": user_id,
-                "message_preview": message_preview
-            }
+            extra={"user_id": user_id, "message_preview": message_preview},
         )
         await message.answer(
             "Sorry, I encountered an error processing your message. Please try again."
         )
+
 
 if __name__ == "__main__":
     logger.info("Starting bot polling")

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The **Personal Development Coach Telegram Bot** is an intelligent assistant designed to help users manage their personal development goals seamlessly through Telegram. Integrated with Todoist, it allows users to track tasks, set goals, and receive personalized coaching advice powered by advanced AI models.
+The **Personal Development Coach Telegram Bot** is an intelligent assistant designed to help users manage their personal development goals seamlessly through Telegram. Integrated with Todoist, it allows users to track tasks and receive personalized coaching advice powered by advanced AI models.
 
 ## Features
 
@@ -47,16 +47,19 @@ The bot leverages a modular architecture to ensure scalability and maintainabili
 ### Steps
 
 1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/saminkhan1/focuscoach.git
    cd personal-dev-coach-bot   ```
 
 2. **Create a Virtual Environment**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate   ```
 
 3. **Install Dependencies**
+
    ```bash
    pip install -r requirements.txt   ```
 
@@ -65,6 +68,7 @@ The bot leverages a modular architecture to ensure scalability and maintainabili
 1. **Environment Variables**
 
    Create a `.env` file in the root directory and add the following variables:
+
    ```env
    TELEGRAM_BOT_TOKEN=your_telegram_bot_token
    TODOIST_API_TOKEN=your_todoist_api_token   ```
@@ -79,6 +83,7 @@ The bot leverages a modular architecture to ensure scalability and maintainabili
 ## Usage
 
 1. **Start the Bot**
+
    ```bash
    python telegram_bot.py   ```
 
@@ -102,14 +107,17 @@ Contributions are welcome! Please follow these steps to contribute:
 1. **Fork the Repository**
 
 2. **Create a Feature Branch**
+
    ```bash
    git checkout -b feature/YourFeature   ```
 
 3. **Commit Your Changes**
+
    ```bash
    git commit -m "Add some feature"   ```
 
 4. **Push to the Branch**
+
    ```bash
    git push origin feature/YourFeature   ```
 
