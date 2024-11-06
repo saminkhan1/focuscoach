@@ -1,7 +1,5 @@
 import logging
-from typing import List
 from ..state import State
-from ..models import SimpleTask
 
 
 logger = logging.getLogger(__name__)
